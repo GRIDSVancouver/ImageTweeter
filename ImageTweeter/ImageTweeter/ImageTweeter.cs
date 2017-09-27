@@ -14,34 +14,32 @@ namespace ImageTweeter
         //original every-5-min cron: "0 */5 * * * *"
         public static void Run([TimerTrigger("*/10 * * * * *")]TimerInfo myTimer, TraceWriter log)
         {
-            log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
-
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
+
+            //todo these should prolly be in config
+            const string UnprocessedContainerName = "unprocessedimages";
+            const string ProcessedContainerName = "processedimages";
 
             //grab file
 
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-            CloudBlobContainer container = blobClient.GetContainerReference("unprocessedimages");
-            //todo: pick at random?
-            var image = (CloudBlob) container.ListBlobs().First();
+            CloudBlobContainer unprocessedContainer = blobClient.GetContainerReference(UnprocessedContainerName);
+            //todo: handle non-CloudBlobs gracefully
+            var sourceBlob = (CloudBlockBlob) unprocessedContainer.ListBlobs().First();
 
-            log.Info($"About to execute on blob '{image.Name}'");
+            log.Info($"About to Tweet blob '{sourceBlob.Name}'");
 
             //tweet
 
+
+
             //move file
-        }
-
-
-        static void MoveBlobInSameStorageAccount(CloudStorageAccount storageAccount)
-        {
-            var client = storageAccount.CreateCloudBlobClient();
-            var sourceContainer = client.GetContainerReference("source-container-name");
-            var sourceBlob = sourceContainer.GetBlockBlobReference("blob-name");
-            var destinationContainer = client.GetContainerReference("destination-container-name");
-            var destinationBlob = destinationContainer.GetBlockBlobReference("blob-name");
+            CloudBlobContainer processedContainer = blobClient.GetContainerReference(ProcessedContainerName);
+            var destinationBlob = processedContainer.GetBlockBlobReference(sourceBlob.Name);
             destinationBlob.StartCopy(sourceBlob);
+            //seems sketchy to not confirm that the copy has finished before deleting, but some StackOverflow rando said it's OK!
             sourceBlob.Delete(DeleteSnapshotsOption.IncludeSnapshots);
+            log.Info($"Moved file to '{ProcessedContainerName}'");
         }
     }
 }
