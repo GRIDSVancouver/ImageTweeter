@@ -1,18 +1,20 @@
-using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Linq;
+using Tweetinvi;
+using Tweetinvi.Models;
+using Tweetinvi.Parameters;
+using System.Collections.Generic;
 
 namespace ImageTweeter
 {
     public static class ImageTweeter
     {
         [FunctionName("ImageTweeter")]
-        //original every-5-min cron: "0 */5 * * * *"
-        public static void Run([TimerTrigger("*/10 * * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 20 10 * * *")]TimerInfo myTimer, TraceWriter log)
         {
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
 
@@ -31,7 +33,25 @@ namespace ImageTweeter
 
             //tweet
 
+            var consumerKey = CloudConfigurationManager.GetSetting("TwitterConsumerKey");
+            var consumerSecret = CloudConfigurationManager.GetSetting("TwitterConsumerSecret");
+            var accessToken = CloudConfigurationManager.GetSetting("TwitterAccessToken");
+            var accessTokenSecret = CloudConfigurationManager.GetSetting("TwitterAccessTokenSecret");
+            
+            ExceptionHandler.SwallowWebExceptions = false;
+            Auth.SetUserCredentials(consumerKey, consumerSecret, accessToken, accessTokenSecret);
+            
+            byte[] fileContent = new byte[sourceBlob.Properties.Length];
+            sourceBlob.DownloadToByteArray(fileContent, 0);
 
+            var media = Upload.UploadImage(fileContent);
+
+            var tweet = Tweet.PublishTweet(" ", new PublishTweetOptionalParameters
+            {
+                Medias = new List<IMedia> { media }
+            });
+
+            log.Info($"Tweeted with ID '{tweet.Id}'");
 
             //move file
             CloudBlobContainer processedContainer = blobClient.GetContainerReference(ProcessedContainerName);
