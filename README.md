@@ -8,4 +8,4 @@ Really simple logic:
 1. Tweet that image (with no text)
 1. Move that image to a container named `processedimages`
 
-The schedule is currently defined by an Azure Function [timer trigger](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer) (basically just a CRON expression). Could easily be tweaked to use a different trigger.
+The schedule is currently defined by an Azure Function [timer trigger](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer) (basically just a CRON expression) in the "TimerSchedule" app setting.
