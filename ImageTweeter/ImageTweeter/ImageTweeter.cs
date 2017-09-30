@@ -14,7 +14,7 @@ namespace ImageTweeter
     public static class ImageTweeter
     {
         [FunctionName("ImageTweeter")]
-        public static void Run([TimerTrigger("0 20 10 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("%TimerSchedule%")]TimerInfo myTimer, TraceWriter log)
         {
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
 
