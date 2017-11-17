@@ -28,7 +28,7 @@ namespace ImageTweeter
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlobContainer unprocessedContainer = blobClient.GetContainerReference(UnprocessedContainerName);
             //todo: handle non-CloudBlobs gracefully
-            var sourceBlob = (CloudBlockBlob) unprocessedContainer.ListBlobs().OrderBy(b => Guid.NewGuid()); //pick random blob. yes this is a silly and slow way to do it
+            var sourceBlob = (CloudBlockBlob) unprocessedContainer.ListBlobs().OrderBy(b => Guid.NewGuid()).First(); //pick random blob. yes this is a silly and slow way to do it
 
             log.Info($"About to Tweet blob '{sourceBlob.Name}'");
 
