@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageTweeter.Functions", "ImageTweeter.Functions\ImageTweeter.Functions.csproj", "{605FF351-DD4E-405D-AD7B-7892ABD5F1A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageTweeter.Function", "ImageTweeter.Function\ImageTweeter.Function.csproj", "{605FF351-DD4E-405D-AD7B-7892ABD5F1A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
